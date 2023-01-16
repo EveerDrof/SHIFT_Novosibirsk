@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Tests {
+public class SorterTests {
     @Test
     void fiveElementsTest() {
         Sorter sorter = new Sorter();
@@ -48,5 +48,12 @@ public class Tests {
         Collections.reverse(reversed);
         List<Integer> sorted = sorter.sort(values);
         assertEquals(reversed, sorted);
+    }
+
+    @Test
+    void sameValuesAfterSplit() {
+        Sorter sorter = new Sorter();
+        List<Integer> values = List.of(1, 0, 1, 1, 0, 1);
+        assertEquals(List.of(0, 0, 1, 1, 1, 1), sorter.sort(values));
     }
 }

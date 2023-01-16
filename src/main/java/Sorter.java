@@ -1,36 +1,10 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class Sorter {
-    protected List<Integer> merge(List<Integer> leftHalf, List<Integer> rightHalf) {
-        int totalSize = leftHalf.size() + rightHalf.size();
-        List<Integer> result = new ArrayList<>(totalSize);
-        int firstArrIndex = 0;
-        int secondArrIndex = 0;
-        for (int i = 0; i < totalSize; i++) {
-            int firstArrValue = leftHalf.get(firstArrIndex);
-            int secondArrValue = rightHalf.get(secondArrIndex);
-            if (firstArrValue < secondArrValue) {
-                result.add(firstArrValue);
-                firstArrIndex += 1;
-                if (firstArrIndex == leftHalf.size()) {
-                    for (; secondArrIndex < rightHalf.size(); secondArrIndex++) {
-                        result.add(rightHalf.get(secondArrIndex));
-                    }
-                    break;
-                }
-            } else {
-                result.add(secondArrValue);
-                secondArrIndex += 1;
-                if (secondArrIndex == rightHalf.size()) {
-                    for (; firstArrIndex < leftHalf.size(); firstArrIndex++) {
-                        result.add(leftHalf.get(firstArrIndex));
-                    }
-                    break;
-                }
-            }
-        }
-        return result;
+    private final Merger merger;
+
+    public Sorter() {
+        this.merger = new Merger();
     }
 
     protected List<Integer> sortRecursive(List<Integer> values) {
@@ -45,7 +19,7 @@ public class Sorter {
         }
         List<Integer> firstHalf = sortRecursive(values.subList(0, values.size() / 2));
         List<Integer> secondHalf = sortRecursive(values.subList(values.size() / 2, values.size()));
-        return merge(firstHalf, secondHalf);
+        return merger.merge(firstHalf, secondHalf);
     }
 
     public List<Integer> sort(List<Integer> values) {
