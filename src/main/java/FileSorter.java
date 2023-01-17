@@ -1,21 +1,32 @@
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileSorter {
     private final Sorter sorter;
+    private final NumIO numIO;
 
     public FileSorter() {
         this.sorter = new Sorter();
+        this.numIO = new NumIO();
     }
 
     public File sort(List<File> testFile) throws Exception {
-        File file = new File("output.txt");
-        file.createNewFile();
-        List<Integer> list = List.of(1, 2, 3, 4, 5);
-        try (PrintWriter printWriter = new PrintWriter(file)) {
-            list.forEach(printWriter::println);
+        List<Integer> unsorted = new ArrayList<>();
+        testFile.forEach((file) -> {
+            try {
+                unsorted.addAll(numIO.read(file, 10));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        List<Integer> sorted = sorter.sort(unsorted);
+        File outputFile = new File("output.txt");
+        outputFile.createNewFile();
+        try (PrintWriter printWriter = new PrintWriter(outputFile)) {
+            sorted.forEach(printWriter::println);
         }
-        return file;
+        return outputFile;
     }
 }

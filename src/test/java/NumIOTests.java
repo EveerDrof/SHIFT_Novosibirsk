@@ -37,4 +37,12 @@ public class NumIOTests {
             assertEquals(list.subList(0, numbersToRead), fileNumbers);
         }
     }
+
+    @Test
+    public void stopAtTheEndTest() throws Exception {
+        File tempFile = TestUtils.getTempFile(InputType.INPUT_CASE2);
+        NumIO numIO = new NumIO();
+        List<Integer> list = numIO.read(tempFile, 1000);
+        assertEquals(TestUtils.getTestList(InputType.INPUT_CASE2), list);
+    }
 }

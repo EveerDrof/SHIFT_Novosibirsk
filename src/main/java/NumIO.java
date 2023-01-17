@@ -15,6 +15,9 @@ public class NumIO {
         List<Integer> result = new ArrayList<>();
         try (Scanner scanner = new Scanner(tempFile)) {
             for (int i = 0; i < numbersToRead; i++) {
+                if (!scanner.hasNextInt()) {
+                    break;
+                }
                 result.add(scanner.nextInt());
             }
         }
