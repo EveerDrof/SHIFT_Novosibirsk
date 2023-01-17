@@ -16,7 +16,7 @@ public class FileSorter {
         List<Integer> unsorted = new ArrayList<>();
         testFile.forEach((file) -> {
             try {
-                unsorted.addAll(numIO.read(file, 10));
+                unsorted.addAll(numIO.read(file, 999999));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

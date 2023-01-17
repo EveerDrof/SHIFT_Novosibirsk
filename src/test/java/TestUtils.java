@@ -7,11 +7,19 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestUtils {
+    protected static int testsFileIndex = 0;
+
     public static List<Integer> getTestList(InputType inputType) {
         List<Integer> result;
         switch (inputType) {
             case INPUT_CASE1 -> result = List.of(5, 4, 2, 3, 1);
             case INPUT_CASE2 -> result = List.of(0, 6, 7);
+            case INPUT_BIG_CASE -> {
+                result = new ArrayList<>();
+                for (int i = 5000; i >= -5000; i--) {
+                    result.add(i);
+                }
+            }
             default -> result = List.of();
         }
         return result;
@@ -33,9 +41,10 @@ public class TestUtils {
         return result;
     }
 
-    public static File getTempFile(InputType type) throws Exception {
-        File file = File.createTempFile("MergeSortApp", ".txt");
+    public static synchronized File getTempFile(InputType type) throws Exception {
+        File file = File.createTempFile("MergeSortApp_" + testsFileIndex, ".txt");
         writeToFile(getTestList(type), file);
+        testsFileIndex += 1;
         return file;
     }
 
@@ -45,11 +54,4 @@ public class TestUtils {
             case EXPECTED_CASE2 -> assertEquals(List.of(0, 1, 2, 3, 4, 5, 6, 7), readList(file));
         }
     }
-//    public static File get() throws Exception{
-//        File file = getTempFile();
-//        List<Integer> testNumbers = List.of(1,0,1,1,0,1);
-//        try(PrintWriter printWriter = new PrintWriter(file)){
-//            for
-//        }
-//    }
 }
