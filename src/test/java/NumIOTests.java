@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
@@ -44,5 +46,14 @@ public class NumIOTests {
         NumIO numIO = new NumIO();
         List<Integer> list = numIO.read(tempFile, 1000);
         assertEquals(TestUtils.getTestList(InputType.INPUT_CASE2), list);
+    }
+
+    @Test
+    public void readFromInputStream() throws Exception {
+        File tempFile = TestUtils.getTempFile(InputType.INPUT_CASE1);
+        NumIO numIO = new NumIO();
+        InputStream inputStream = new FileInputStream(tempFile);
+        List<Integer> list = numIO.read(inputStream, 1000);
+        assertEquals(TestUtils.getTestList(InputType.INPUT_CASE1), list);
     }
 }
