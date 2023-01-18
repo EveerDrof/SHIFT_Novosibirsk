@@ -32,6 +32,8 @@ public class FileSorter {
         long tempFilesNumber = 0;
         Queue<File> filesForMerging = new LinkedList<>();
         long numbersToRead = memoryLimit / integerSize;
+        long overhead = numbersToRead * 70 / 100;
+        numbersToRead -= overhead;
         while (!inputStreams.isEmpty()) {
             long remainingNumbersToRead = numbersToRead;
             while (remainingNumbersToRead > 0 && !inputStreams.isEmpty()) {
@@ -50,29 +52,13 @@ public class FileSorter {
         while (filesForMerging.size() != 1) {
             InputStream firstStream = new FileInputStream(filesForMerging.remove());
             InputStream secondStream = new FileInputStream(filesForMerging.remove());
-            List<Integer> firstFileNumbers = numIO.read(firstStream, numbersToRead / 2);
-            List<Integer> secondFileNumbers = numIO.read(secondStream, numbersToRead / 2);
-            List<Integer> merged = merger.merge(firstFileNumbers, secondFileNumbers);
-            filesForMerging.add(numIO.write(merged, "TempFileForMerging_" + tempFilesNumber + ".txt"));
+            for (int i = 0; i < 2; i++) {
+                List<Integer> firstFileNumbers = numIO.read(firstStream, numbersToRead / 5);
+                List<Integer> secondFileNumbers = numIO.read(secondStream, numbersToRead / 5);
+                List<Integer> merged = merger.merge(firstFileNumbers, secondFileNumbers);
+                filesForMerging.add(numIO.write(merged, "TempFileForMerging_" + tempFilesNumber + ".txt"));
+            }
         }
-//        testFiles.get(0).
-//                testFiles.forEach((file) -> {
-//                    try {
-//                        List<Integer> numbersRed = numIO.read(file, numbersToRead);
-//                        if (numbersRed.size() == 0) {
-//                            break;
-//                        }
-//                        unsorted.addAll(numbersRed);
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                });
-//        List<Integer> sorted = sorter.sort(unsorted);
-//        File outputFile = new File("output.txt");
-//        outputFile.createNewFile();
-//        try (PrintWriter printWriter = new PrintWriter(outputFile)) {
-//            sorted.forEach(printWriter::println);
-//        }
         return filesForMerging.remove();
     }
 

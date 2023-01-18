@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileSorterTests {
     @Test
@@ -46,21 +45,17 @@ public class FileSorterTests {
 
     @Test
     void memoryLimitTest() throws Exception {
+        final long memoryLimit = 1024L * 1024 * 100;
         FileSorter fileSorter = new FileSorter();
-        long memoryLimit = 10000000;
         fileSorter.setMemoryLimit(memoryLimit);
         List<File> files = new ArrayList<>();
-        int filesNumber = 350;
+        int filesNumber = 10;
         for (int i = 0; i < filesNumber; i++) {
-            files.add(TestUtils.getTempFile(InputType.INPUT_BIG_CASE));
+            files.add(TestUtils.getTempFile(InputType.INPUT_500MB));
         }
-        fileSorter.sort(files);
-//        MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-        long memoryUsed = 0;
-        //heapMemoryUsage.getUsed();
-        memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        System.out.println("Heap memory usage : " + (memoryUsed));
-        assertTrue(memoryUsed <= memoryLimit, "Memory usage is " + (memoryUsed / 1024 / 1024) +
-                " It's higher than needed because memory limit is " + (memoryLimit / 1024 / 1024));
+        MemoryUsageChecker memoryUsageChecker = new MemoryUsageChecker(memoryLimit);
+        File result = fileSorter.sort(files);
+        TestUtils.assertMemoryTestFile(result, filesNumber);
+        memoryUsageChecker.stop();
     }
 }

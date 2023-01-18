@@ -14,6 +14,14 @@ public class Merger {
         List<Integer> result = new ArrayList<>();
         Iterator<Integer> leftIterator = leftHalf.iterator();
         Iterator<Integer> rightIterator = rightHalf.iterator();
+        if (!leftIterator.hasNext()) {
+            addRemainingValues(result, rightIterator);
+            return result;
+        }
+        if (!rightIterator.hasNext()) {
+            addRemainingValues(result, leftIterator);
+            return result;
+        }
         int leftValue = leftIterator.next();
         int rightValue = rightIterator.next();
         while (true) {

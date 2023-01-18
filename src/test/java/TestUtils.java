@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,6 +18,13 @@ public class TestUtils {
             case INPUT_BIG_CASE -> {
                 result = new ArrayList<>();
                 for (int i = 5000; i >= -5000; i--) {
+                    result.add(i);
+                }
+            }
+            case INPUT_500MB -> {
+                result = new ArrayList<>();
+                int range = 1024 * 1024 / (2 * 4);
+                for (int i = range; i >= -range; i--) {
                     result.add(i);
                 }
             }
@@ -54,4 +62,18 @@ public class TestUtils {
             case EXPECTED_CASE2 -> assertEquals(List.of(0, 1, 2, 3, 4, 5, 6, 7), readList(file));
         }
     }
+
+    public static void assertMemoryTestFile(File file, int copies) throws Exception {
+        List<Integer> expected = getTestList(InputType.INPUT_500MB);
+        List<Integer> actualList = readList(file);
+        Collections.reverse(expected);
+        int actualIndex = 0;
+        for (Integer integer : expected) {
+            for (int i = 0; i < copies; i++) {
+                assertEquals(integer, actualList.get(actualIndex));
+                actualIndex += 1;
+            }
+        }
+    }
+
 }
