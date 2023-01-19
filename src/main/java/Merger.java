@@ -1,7 +1,7 @@
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Merger {
@@ -59,7 +59,7 @@ public class Merger {
         return merge(numIO.read(inputStream1, valuesToRead), numIO.read(inputStream2, valuesToRead));
     }
 
-    public List<Integer> merge(Scanner scanner1, Scanner scanner2, long valuesToRead) throws Exception {
+    public List<Integer> merge(Scanner scanner1, Scanner scanner2, long valuesToRead) {
         return merge(numIO.read(scanner1, valuesToRead), numIO.read(scanner2, valuesToRead));
     }
 
@@ -74,16 +74,17 @@ public class Merger {
             Scanner firstScanner = new Scanner(firstFile);
             Scanner secondScanner = new Scanner(secondFile);
             File mergedFile = new File(tmpDirName + "/MergedFile_" + tempFilesNumber + ".txt");
-            OutputStream mergingStream = new FileOutputStream(mergedFile, true);
+            PrintWriter mergingPrintWriter = new PrintWriter(new FileOutputStream(mergedFile, true));
             mergedFile.createNewFile();
             while (firstScanner.hasNextInt() || secondScanner.hasNextInt()) {
-                List<Integer> merged = merge(firstScanner, secondScanner, memoryLimit / 2);
+                List<Integer> merged = merge(firstScanner, secondScanner, memoryLimit);
                 System.out.println("Merged : ");
                 System.out.println(merged);
-                numIO.write(merged, mergingStream);
+                numIO.write(merged, mergingPrintWriter);
                 System.out.println("Cycle continues");
             }
-            mergingStream.close();
+            System.out.println("=============Cycle ended");
+            mergingPrintWriter.close();
             filesForMerging.add(mergedFile);
             tempFilesNumber++;
 //            firstFile.delete();

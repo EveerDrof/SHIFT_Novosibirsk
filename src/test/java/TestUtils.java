@@ -55,7 +55,7 @@ public class TestUtils {
 
     public static List<Integer> getBigList(int range) {
         List<Integer> list = new LinkedList<>();
-        for (int i = -range; i <= range; i++) {
+        for (int i = range; i >= -range; i--) {
             list.add(i);
         }
         return list;
@@ -77,7 +77,6 @@ public class TestUtils {
         System.out.println("Actual : ");
         System.out.println(actualList);
         assertEquals(expected.size() * copies, actualList.size());
-        Collections.reverse(expected);
         int actualIndex = 0;
         for (Integer integer : expected) {
             for (int i = 0; i < copies; i++) {

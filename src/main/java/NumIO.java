@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class NumIO {
-    public void write(List<Integer> list, OutputStream outputStream) throws Exception {
+    public void write(List<Integer> list, OutputStream outputStream) {
         try (PrintWriter printWriter = new PrintWriter(outputStream)) {
             list.forEach(printWriter::println);
         }
+    }
+
+    public void write(List<Integer> list, PrintWriter printWriter) {
+        list.forEach(printWriter::println);
     }
 
     public File write(List<Integer> list, File outputFile) throws Exception {
@@ -32,7 +36,7 @@ public class NumIO {
         return read(new Scanner(inputStream), numbersToRead);
     }
 
-    public List<Integer> read(Scanner scanner, long numbersToRead) throws Exception {
+    public List<Integer> read(Scanner scanner, long numbersToRead) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < numbersToRead; i++) {
             if (!scanner.hasNextInt()) {

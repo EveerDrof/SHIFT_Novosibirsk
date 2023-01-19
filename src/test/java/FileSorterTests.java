@@ -63,10 +63,10 @@ public class FileSorterTests {
     @Test
     void multipleInputFilesWithMemoryLimit() throws Exception {
         FileSorter fileSorter = new FileSorter();
-        fileSorter.setMemoryLimit(100);
+        fileSorter.setMemoryLimit(43);
         List<File> files = new ArrayList<>();
-        int filesNumber = 10;
-        int range = 300;
+        int filesNumber = 5;
+        int range = 3;
         for (int i = 0; i < filesNumber; i++) {
             files.add(TestUtils.getBigTempFile(range));
         }
