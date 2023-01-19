@@ -56,4 +56,11 @@ public class SorterTests {
         List<Integer> values = List.of(1, 0, 1, 1, 0, 1);
         assertEquals(List.of(0, 0, 1, 1, 1, 1), sorter.sort(values));
     }
+
+    @Test
+    void emptyListTest() {
+        Sorter sorter = new Sorter();
+        List<Integer> values = List.of();
+        assertEquals(List.of(), sorter.sort(values));
+    }
 }

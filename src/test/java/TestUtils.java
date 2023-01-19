@@ -1,9 +1,6 @@
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -56,6 +53,41 @@ public class TestUtils {
         return file;
     }
 
+    public static List<Integer> getBigList(int range) {
+        List<Integer> list = new LinkedList<>();
+        for (int i = -range; i <= range; i++) {
+            list.add(i);
+        }
+        return list;
+    }
+
+    public static synchronized File getBigTempFile(int range) throws Exception {
+        File file = File.createTempFile("MergeSortApp_" + testsFileIndex, ".txt");
+        writeToFile(getBigList(range), file);
+        testsFileIndex += 1;
+        return file;
+    }
+
+    public static void assertBigTempFile(File file, int range, int copies) throws Exception {
+        List<Integer> expected = getBigList(range);
+        Collections.reverse(expected);
+        System.out.println("Expected : ");
+        System.out.println(expected);
+        List<Integer> actualList = readList(file);
+        System.out.println("Actual : ");
+        System.out.println(actualList);
+        assertEquals(expected.size() * copies, actualList.size());
+        Collections.reverse(expected);
+        int actualIndex = 0;
+        for (Integer integer : expected) {
+            for (int i = 0; i < copies; i++) {
+                System.out.println("Comparing : " + integer + " : " + actualList.get(actualIndex) + " index " + actualIndex);
+                assertEquals(integer, actualList.get(actualIndex));
+                actualIndex += 1;
+            }
+        }
+    }
+
     public static void assertFile(File file, ExpectedType type) throws Exception {
         switch (type) {
             case EXPECTED_CASE1 -> assertEquals(List.of(1, 2, 3, 4, 5), readList(file));
@@ -63,17 +95,10 @@ public class TestUtils {
         }
     }
 
-    public static void assertMemoryTestFile(File file, int copies) throws Exception {
-        List<Integer> expected = getTestList(InputType.INPUT_500MB);
-        List<Integer> actualList = readList(file);
-        Collections.reverse(expected);
-        int actualIndex = 0;
-        for (Integer integer : expected) {
-            for (int i = 0; i < copies; i++) {
-                assertEquals(integer, actualList.get(actualIndex));
-                actualIndex += 1;
-            }
-        }
+    public static synchronized File createTempFile(List<Integer> data) throws Exception {
+        File file = getTempFile(InputType.EMPTY_FILE);
+        writeToFile(data, file);
+        return file;
     }
 
 }

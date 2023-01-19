@@ -8,7 +8,7 @@ public class Sorter {
     }
 
     protected List<Integer> sortRecursive(List<Integer> values) {
-        if (values.size() == 1) {
+        if (values.size() <= 1) {
             return values;
         }
         if (values.size() == 2) {

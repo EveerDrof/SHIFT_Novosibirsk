@@ -1,8 +1,17 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
 
 public class Merger {
+    private NumIO numIO;
+    private TmpFilesManager tmpFilesManager;
+
+    public Merger() {
+        numIO = new NumIO();
+        tmpFilesManager = new TmpFilesManager();
+    }
 
     protected void addRemainingValues(List<Integer> result, Iterator<Integer> iterator) {
         while (iterator.hasNext()) {
@@ -44,5 +53,44 @@ public class Merger {
             rightValue = rightIterator.next();
         }
         return result;
+    }
+
+    public List<Integer> merge(InputStream inputStream1, InputStream inputStream2, long valuesToRead) throws Exception {
+        return merge(numIO.read(inputStream1, valuesToRead), numIO.read(inputStream2, valuesToRead));
+    }
+
+    public List<Integer> merge(Scanner scanner1, Scanner scanner2, long valuesToRead) throws Exception {
+        return merge(numIO.read(scanner1, valuesToRead), numIO.read(scanner2, valuesToRead));
+    }
+
+    public File merge(Queue<File> filesForMerging, long memoryLimit) throws Exception {
+        String tmpDirName = "./tmpMerger";
+        tmpFilesManager.prepareTemporaryDir(tmpDirName);
+        int tempFilesNumber = 0;
+        while (filesForMerging.size() != 1) {
+            File firstFile = filesForMerging.remove();
+            File secondFile = filesForMerging.remove();
+            System.out.println("Files for merging size : " + filesForMerging.size());
+            Scanner firstScanner = new Scanner(firstFile);
+            Scanner secondScanner = new Scanner(secondFile);
+            File mergedFile = new File(tmpDirName + "/MergedFile_" + tempFilesNumber + ".txt");
+            OutputStream mergingStream = new FileOutputStream(mergedFile, true);
+            mergedFile.createNewFile();
+            while (firstScanner.hasNextInt() || secondScanner.hasNextInt()) {
+                List<Integer> merged = merge(firstScanner, secondScanner, memoryLimit / 2);
+                System.out.println("Merged : ");
+                System.out.println(merged);
+                numIO.write(merged, mergingStream);
+                System.out.println("Cycle continues");
+            }
+            mergingStream.close();
+            filesForMerging.add(mergedFile);
+            tempFilesNumber++;
+//            firstFile.delete();
+//            secondFile.delete();
+        }
+        File result = filesForMerging.remove();
+        result.renameTo(new File(tmpDirName + "/Result.txt"));
+        return new File(tmpDirName + "/Result.txt");
     }
 }

@@ -1,65 +1,81 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileSorter {
     private final Sorter sorter;
     private final NumIO numIO;
+    private int tempFilesNumber;
     private long memoryLimit;
+    private TmpFilesManager tmpFilesManager;
 
     public FileSorter() {
         this.sorter = new Sorter();
         this.numIO = new NumIO();
+        this.tempFilesNumber = 0;
+        this.tmpFilesManager = new TmpFilesManager();
+
         memoryLimit = Long.MAX_VALUE;
     }
 
-    public File sort(List<File> testFiles) throws Exception {
-        Queue<InputStream> inputStreams = testFiles.stream().map((file) -> {
+
+    private Queue<Scanner> filesToScanners(List<File> testFiles) {
+        return testFiles.stream().map((file) -> {
             try {
-                return new FileInputStream(file);
+                return new Scanner(file);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }).collect(Collectors.toCollection(LinkedList::new));
-        List<Integer> unsorted = new ArrayList<>();
+    }
+
+    private long computeNumbersToRead() {
         final long integerSize = 4;
-        long tempFilesNumber = 0;
-        Queue<File> filesForMerging = new LinkedList<>();
         long numbersToRead = memoryLimit / integerSize;
         long overhead = numbersToRead * 70 / 100;
         numbersToRead -= overhead;
-        while (!inputStreams.isEmpty()) {
+        return numbersToRead;
+    }
+
+    private Queue<File> generateFilesForMerging(Queue<Scanner> inputScanners) throws Exception {
+        long numbersToRead = computeNumbersToRead();
+        long overhead = numbersToRead / 10;
+        numbersToRead -= overhead;
+        List<Integer> unsorted;
+        Queue<File> filesForMerging = new LinkedList<>();
+        while (!inputScanners.isEmpty()) {
+            unsorted = new ArrayList<>();
             long remainingNumbersToRead = numbersToRead;
-            while (remainingNumbersToRead > 0 && !inputStreams.isEmpty()) {
-                List<Integer> numbers = numIO.read(inputStreams.peek(), remainingNumbersToRead);
+            while (remainingNumbersToRead > 0 && !inputScanners.isEmpty()) {
+                List<Integer> numbers = numIO.read(inputScanners.peek(), remainingNumbersToRead);
+                System.out.println("Numbers are");
+                System.out.println(numbers);
                 if (numbers.size() < remainingNumbersToRead) {
-                    inputStreams.remove();
+                    inputScanners.remove().close();
                 }
                 remainingNumbersToRead -= numbers.size();
                 unsorted.addAll(numbers);
             }
             List<Integer> sorted = sorter.sort(unsorted);
-            filesForMerging.add(numIO.write(sorted, "TempFileForMerging_" + tempFilesNumber + ".txt"));
+            System.out.println("Sorted size : " + sorted.size());
+            filesForMerging.add(numIO.write(sorted, "./tempSorter/SortedFile_" + tempFilesNumber + ".txt"));
             tempFilesNumber++;
         }
-        Merger merger = new Merger();
-        while (filesForMerging.size() != 1) {
-            InputStream firstStream = new FileInputStream(filesForMerging.remove());
-            InputStream secondStream = new FileInputStream(filesForMerging.remove());
-            for (int i = 0; i < 2; i++) {
-                List<Integer> firstFileNumbers = numIO.read(firstStream, numbersToRead / 5);
-                List<Integer> secondFileNumbers = numIO.read(secondStream, numbersToRead / 5);
-                List<Integer> merged = merger.merge(firstFileNumbers, secondFileNumbers);
-                filesForMerging.add(numIO.write(merged, "TempFileForMerging_" + tempFilesNumber + ".txt"));
-            }
+        return filesForMerging;
+    }
+
+
+    public File sort(List<File> testFiles) throws Exception {
+        tmpFilesManager.prepareTemporaryDir("./tempSorter");
+        Queue<Scanner> inputScanners = filesToScanners(testFiles);
+        Queue<File> filesForMerging = generateFilesForMerging(inputScanners);
+        System.out.println("Now we merging: " + filesForMerging.size());
+        for (File f : filesForMerging) {
+            System.out.println(f.getName());
         }
-        return filesForMerging.remove();
+        Merger merger = new Merger();
+        return merger.merge(filesForMerging, memoryLimit);
     }
 
 

@@ -45,17 +45,43 @@ public class FileSorterTests {
 
     @Test
     void memoryLimitTest() throws Exception {
-        final long memoryLimit = 1024L * 1024 * 100;
+        final int memoryLimit = 1024;
         FileSorter fileSorter = new FileSorter();
         fileSorter.setMemoryLimit(memoryLimit);
         List<File> files = new ArrayList<>();
-        int filesNumber = 10;
+        int filesNumber = 2;
+        final int range = memoryLimit * 2;
         for (int i = 0; i < filesNumber; i++) {
-            files.add(TestUtils.getTempFile(InputType.INPUT_500MB));
+            files.add(TestUtils.getBigTempFile(range));
         }
         MemoryUsageChecker memoryUsageChecker = new MemoryUsageChecker(memoryLimit);
         File result = fileSorter.sort(files);
-        TestUtils.assertMemoryTestFile(result, filesNumber);
+        TestUtils.assertBigTempFile(result, range, filesNumber);
         memoryUsageChecker.stop();
+    }
+
+    @Test
+    void multipleInputFilesWithMemoryLimit() throws Exception {
+        FileSorter fileSorter = new FileSorter();
+        fileSorter.setMemoryLimit(100);
+        List<File> files = new ArrayList<>();
+        int filesNumber = 10;
+        int range = 300;
+        for (int i = 0; i < filesNumber; i++) {
+            files.add(TestUtils.getBigTempFile(range));
+        }
+        File result = fileSorter.sort(files);
+        TestUtils.assertBigTempFile(result, range, filesNumber);
+    }
+
+    @Test
+    void oneFileMemoryLimitTest() throws Exception {
+        FileSorter fileSorter = new FileSorter();
+        fileSorter.setMemoryLimit(10 * 4);
+        int range = 10;
+        List<File> files = List.of(TestUtils.getBigTempFile(range));
+        File result = fileSorter.sort(files);
+        System.out.println("NAME =============" + result.getName());
+        TestUtils.assertBigTempFile(result, range, 1);
     }
 }

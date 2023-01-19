@@ -1,22 +1,25 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class NumIO {
-    public File write(List<Integer> list, File outputFile) throws Exception {
-        try (PrintWriter printWriter = new PrintWriter(outputFile)) {
+    public void write(List<Integer> list, OutputStream outputStream) throws Exception {
+        try (PrintWriter printWriter = new PrintWriter(outputStream)) {
             list.forEach(printWriter::println);
         }
+    }
+
+    public File write(List<Integer> list, File outputFile) throws Exception {
+        write(list, new FileOutputStream(outputFile, true));
         return outputFile;
     }
 
     public File write(List<Integer> list, String outputFileName) throws Exception {
         File file = new File(outputFileName);
-        file.createNewFile();
+        if (!file.exists()) {
+            file.createNewFile();
+        }
         write(list, file);
         return file;
     }
@@ -26,14 +29,16 @@ public class NumIO {
     }
 
     public List<Integer> read(InputStream inputStream, long numbersToRead) throws Exception {
+        return read(new Scanner(inputStream), numbersToRead);
+    }
+
+    public List<Integer> read(Scanner scanner, long numbersToRead) throws Exception {
         List<Integer> result = new ArrayList<>();
-        try (Scanner scanner = new Scanner(inputStream)) {
-            for (int i = 0; i < numbersToRead; i++) {
-                if (!scanner.hasNextInt()) {
-                    break;
-                }
-                result.add(scanner.nextInt());
+        for (int i = 0; i < numbersToRead; i++) {
+            if (!scanner.hasNextInt()) {
+                break;
             }
+            result.add(scanner.nextInt());
         }
         return result;
     }

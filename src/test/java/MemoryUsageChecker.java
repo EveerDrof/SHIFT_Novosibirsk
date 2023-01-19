@@ -18,7 +18,7 @@ public class MemoryUsageChecker implements Runnable {
                 throw new RuntimeException(e);
             }
             long memoryUsed = 0;
-            memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            memoryUsed = Runtime.getRuntime().totalMemory();
             if (memoryUsed > maxValue) {
                 maxValue = memoryUsed;
                 System.out.println("Heap memory usage : " + (maxValue / 1024 / 1024));
