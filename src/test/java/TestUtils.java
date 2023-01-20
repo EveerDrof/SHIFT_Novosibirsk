@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,20 +72,10 @@ public class TestUtils {
     public static void assertBigTempFile(File file, int range, int copies) throws Exception {
         List<Integer> expected = getBigList(range);
         Collections.reverse(expected);
-        System.out.println("Expected : ");
-        System.out.println(expected);
         List<Integer> actualList = readList(file);
-        System.out.println("Actual : ");
-        System.out.println(actualList);
         assertEquals(expected.size() * copies, actualList.size());
-        int actualIndex = 0;
-        for (Integer integer : expected) {
-            for (int i = 0; i < copies; i++) {
-                System.out.println("Comparing : " + integer + " : " + actualList.get(actualIndex) + " index " + actualIndex);
-                assertEquals(integer, actualList.get(actualIndex));
-                actualIndex += 1;
-            }
-        }
+        expected = expected.stream().flatMap(i -> Collections.nCopies(copies, i).stream()).collect(Collectors.toList());
+        assertEquals(expected, actualList);
     }
 
     public static void assertFile(File file, ExpectedType type) throws Exception {

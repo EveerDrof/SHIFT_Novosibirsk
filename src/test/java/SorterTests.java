@@ -1,8 +1,9 @@
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -62,5 +63,36 @@ public class SorterTests {
         Sorter sorter = new Sorter();
         List<Integer> values = List.of();
         assertEquals(List.of(), sorter.sort(values));
+    }
+
+    @Test
+    void generateFilesForMergingTest() throws Exception {
+        Sorter sorter = new Sorter();
+        Queue<File> fileQueue = new LinkedList<File>();
+        List<Integer> values1 = new ArrayList<>();
+        List<Integer> values2 = new ArrayList<>();
+        for (int i = 10; i > 0; i -= 2) {
+            values1.add(i);
+            values2.add(i - 1);
+        }
+        fileQueue.add(TestUtils.createTempFile(values1));
+        fileQueue.add(TestUtils.createTempFile(values2));
+        Queue<Scanner> scannerQueue = fileQueue.stream().map((file) -> {
+            try {
+                return new Scanner(file);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toCollection(LinkedList::new));
+        long memoryLimit = 5;
+        Queue<File> filesForMerging = sorter.generateFilesForMerging(scannerQueue, memoryLimit);
+        NumIO numIO = new NumIO();
+        System.out.println("Files size : " + filesForMerging.size());
+        List<Integer> ints = numIO.read(filesForMerging.remove(), 999);
+        Collections.reverse(values1);
+        Collections.reverse(values2);
+        assertEquals(values1, ints);
+        ints = numIO.read(filesForMerging.remove(), 999);
+        assertEquals(values2, ints);
     }
 }

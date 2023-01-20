@@ -44,13 +44,13 @@ public class FileSorterTests {
     }
 
     @Test
-    void memoryLimitTest() throws Exception {
-        final int memoryLimit = 1024;
+    void memoryLimitTestFileSizeBiggerThanLimit() throws Exception {
+        final int memoryLimit = 16;
         FileSorter fileSorter = new FileSorter();
         fileSorter.setMemoryLimit(memoryLimit);
         List<File> files = new ArrayList<>();
         int filesNumber = 2;
-        final int range = memoryLimit * 2;
+        final int range = 8;
         for (int i = 0; i < filesNumber; i++) {
             files.add(TestUtils.getBigTempFile(range));
         }
