@@ -13,16 +13,16 @@ public class Merger {
         tmpFilesManager = new TmpFilesManager();
     }
 
-    protected void addRemainingValues(List<Integer> result, Iterator<Integer> iterator) {
+    protected <T> void addRemainingValues(List<T> result, Iterator<T> iterator) {
         while (iterator.hasNext()) {
             result.add(iterator.next());
         }
     }
 
-    public List<Integer> merge(List<Integer> leftHalf, List<Integer> rightHalf) {
-        List<Integer> result = new ArrayList<>();
-        Iterator<Integer> leftIterator = leftHalf.iterator();
-        Iterator<Integer> rightIterator = rightHalf.iterator();
+    public <T> List<T> merge(List<T> leftHalf, List<T> rightHalf) {
+        List<T> result = new ArrayList<>();
+        Iterator<T> leftIterator = leftHalf.iterator();
+        Iterator<T> rightIterator = rightHalf.iterator();
         if (!leftIterator.hasNext()) {
             addRemainingValues(result, rightIterator);
             return result;
@@ -31,10 +31,10 @@ public class Merger {
             addRemainingValues(result, leftIterator);
             return result;
         }
-        int leftValue = leftIterator.next();
-        int rightValue = rightIterator.next();
+        T leftValue = leftIterator.next();
+        T rightValue = rightIterator.next();
         while (true) {
-            if (leftValue <= rightValue) {
+            if (Comparator.isGreaterOrEqual(rightValue, leftValue)) {
                 result.add(leftValue);
                 if (!leftIterator.hasNext()) {
                     result.add(rightValue);
@@ -55,11 +55,11 @@ public class Merger {
         return result;
     }
 
-    public List<Integer> merge(InputStream inputStream1, InputStream inputStream2, long valuesToRead) throws Exception {
+    public List<Object> merge(InputStream inputStream1, InputStream inputStream2, long valuesToRead) throws Exception {
         return merge(numIO.read(inputStream1, valuesToRead), numIO.read(inputStream2, valuesToRead));
     }
 
-    public List<Integer> merge(Scanner scanner1, Scanner scanner2, long valuesToRead) {
+    public List<Object> merge(Scanner scanner1, Scanner scanner2, long valuesToRead) {
         return merge(numIO.read(scanner1, valuesToRead), numIO.read(scanner2, valuesToRead));
     }
 
@@ -76,7 +76,7 @@ public class Merger {
             PrintWriter mergingPrintWriter = new PrintWriter(new FileOutputStream(mergedFile, true));
             mergedFile.createNewFile();
             while (firstScanner.hasNextInt() || secondScanner.hasNextInt()) {
-                List<Integer> merged = merge(firstScanner, secondScanner, memoryLimit);
+                List<Object> merged = merge(firstScanner, secondScanner, memoryLimit);
                 numIO.write(merged, mergingPrintWriter);
             }
             mergingPrintWriter.close();

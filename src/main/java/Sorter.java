@@ -13,22 +13,25 @@ public class Sorter {
         this.tmpFilesManager = new TmpFilesManager();
     }
 
-    protected List<Integer> sortRecursive(List<Integer> values) {
+    protected <T> List<T> sortRecursive(List<T> values) {
         if (values.size() <= 1) {
             return values;
         }
         if (values.size() == 2) {
-            if (values.get(1) < values.get(0)) {
+            T value0 = values.get(0);
+            T value1 = values.get(1);
+
+            if (Comparator.isGreater(value0, value1)) {
                 return List.of(values.get(1), values.get(0));
             }
-            return values;
+
         }
-        List<Integer> firstHalf = sortRecursive(values.subList(0, values.size() / 2));
-        List<Integer> secondHalf = sortRecursive(values.subList(values.size() / 2, values.size()));
+        List<T> firstHalf = sortRecursive(values.subList(0, values.size() / 2));
+        List<T> secondHalf = sortRecursive(values.subList(values.size() / 2, values.size()));
         return merger.merge(firstHalf, secondHalf);
     }
 
-    public List<Integer> sort(List<Integer> values) {
+    public <T> List<T> sort(List<T> values) {
         return sortRecursive(values);
     }
 
@@ -37,20 +40,20 @@ public class Sorter {
         long numbersToRead = memoryLimit / 4;
         long overhead = numbersToRead / 10;
         numbersToRead -= overhead;
-        List<Integer> unsorted;
+        List<Object> unsorted;
         Queue<File> filesForMerging = new LinkedList<>();
         while (!inputScanners.isEmpty()) {
             unsorted = new ArrayList<>();
             long remainingNumbersToRead = numbersToRead;
             while (remainingNumbersToRead > 0 && !inputScanners.isEmpty()) {
-                List<Integer> numbers = numIO.read(inputScanners.peek(), remainingNumbersToRead);
+                List<Object> numbers = numIO.read(inputScanners.peek(), remainingNumbersToRead);
                 if (numbers.size() < remainingNumbersToRead) {
                     inputScanners.remove().close();
                 }
                 remainingNumbersToRead -= numbers.size();
                 unsorted.addAll(numbers);
             }
-            List<Integer> sorted = sort(unsorted);
+            List<Object> sorted = sort(unsorted);
             filesForMerging.add(numIO.write(sorted, "./tempSorter/SortedFile_" + tempFilesNumber + ".txt"));
             tempFilesNumber++;
         }

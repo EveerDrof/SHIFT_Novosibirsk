@@ -35,7 +35,7 @@ public class NumIOTests {
             list.forEach(printWriter::println);
         }
         for (int numbersToRead = 1; numbersToRead < list.size(); numbersToRead++) {
-            List<Integer> fileNumbers = numIO.read(tempFile, numbersToRead);
+            List<Object> fileNumbers = numIO.read(tempFile, numbersToRead);
             assertEquals(list.subList(0, numbersToRead), fileNumbers);
         }
     }
@@ -44,7 +44,7 @@ public class NumIOTests {
     public void stopAtTheEndTest() throws Exception {
         File tempFile = TestUtils.getTempFile(InputType.INPUT_CASE2);
         NumIO numIO = new NumIO();
-        List<Integer> list = numIO.read(tempFile, 1000);
+        List<Object> list = numIO.read(tempFile, 1000);
         assertEquals(TestUtils.getTestList(InputType.INPUT_CASE2), list);
     }
 
@@ -53,7 +53,21 @@ public class NumIOTests {
         File tempFile = TestUtils.getTempFile(InputType.INPUT_CASE1);
         NumIO numIO = new NumIO();
         InputStream inputStream = new FileInputStream(tempFile);
-        List<Integer> list = numIO.read(inputStream, 1000);
+        List<Object> list = numIO.read(inputStream, 1000);
         assertEquals(TestUtils.getTestList(InputType.INPUT_CASE1), list);
+    }
+
+    @Test
+    public void writeStringList() throws Exception {
+        File tempFile = TestUtils.getTempFile(InputType.EMPTY_FILE);
+        NumIO numIO = new NumIO();
+        List<String> list = List.of("A", "BB", "ZZZ");
+        numIO.write(list, tempFile);
+        Scanner scanner = new Scanner(tempFile);
+        list.forEach((number) -> {
+            assertTrue(scanner.hasNext());
+            String val = scanner.next();
+            assertEquals(number, val);
+        });
     }
 }

@@ -88,7 +88,7 @@ public class SorterTests {
         long memoryLimit = 20;
         Queue<File> filesForMerging = sorter.generateFilesForMerging(scannerQueue, memoryLimit);
         NumIO numIO = new NumIO();
-        List<Integer> ints = numIO.read(filesForMerging.remove(), 999);
+        List<Object> ints = numIO.read(filesForMerging.remove(), 999);
         Collections.reverse(values1);
         Collections.reverse(values2);
         assertEquals(values1, ints);
@@ -99,7 +99,7 @@ public class SorterTests {
     @Test
     void sorterGenerationMemoryLimitTest() throws Exception {
         File input = TestUtils.getTempFile(InputType.INPUT_BIG_CASE);
-        Queue<Scanner> inputList = new LinkedList();
+        Queue<Scanner> inputList = new LinkedList<>();
         inputList.add(new Scanner(input));
         long memoryLimit = 100;
         Sorter sorter = new Sorter();
@@ -107,5 +107,13 @@ public class SorterTests {
         sorter.generateFilesForMerging(inputList, memoryLimit);
         long memoryUsage = memoryUsageChecker.stopAndGetUsage();
         assertTrue(memoryLimit >= memoryUsage);
+    }
+
+    @Test
+    void stringSortingTest() {
+        Sorter sorter = new Sorter();
+        List<String> unsorted = new ArrayList<>(List.of("A", "H", "B", "Z", "I"));
+        List<String> sorted = sorter.sort(unsorted);
+        assertEquals(List.of("A", "B", "H", "I", "Z"), sorted);
     }
 }

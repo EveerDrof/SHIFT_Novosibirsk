@@ -31,7 +31,7 @@ public class TestUtils {
         return result;
     }
 
-    protected static void writeToFile(List<Integer> list, File file) throws Exception {
+    protected static void writeToFile(List<?> list, File file) throws Exception {
         try (PrintWriter printWriter = new PrintWriter(file)) {
             list.forEach(printWriter::println);
         }
@@ -85,7 +85,7 @@ public class TestUtils {
         }
     }
 
-    public static synchronized File createTempFile(List<Integer> data) throws Exception {
+    public static synchronized File createTempFile(List<?> data) throws Exception {
         File file = getTempFile(InputType.EMPTY_FILE);
         writeToFile(data, file);
         return file;

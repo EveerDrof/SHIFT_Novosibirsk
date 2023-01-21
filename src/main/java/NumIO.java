@@ -4,22 +4,22 @@ import java.util.List;
 import java.util.Scanner;
 
 public class NumIO {
-    public void write(List<Integer> list, OutputStream outputStream) {
+    public <T> void write(List<T> list, OutputStream outputStream) {
         try (PrintWriter printWriter = new PrintWriter(outputStream)) {
             list.forEach(printWriter::println);
         }
     }
 
-    public void write(List<Integer> list, PrintWriter printWriter) {
+    public <T> void write(List<T> list, PrintWriter printWriter) {
         list.forEach(printWriter::println);
     }
 
-    public File write(List<Integer> list, File outputFile) throws Exception {
+    public <T> File write(List<T> list, File outputFile) throws Exception {
         write(list, new FileOutputStream(outputFile, true));
         return outputFile;
     }
 
-    public File write(List<Integer> list, String outputFileName) throws Exception {
+    public <T> File write(List<T> list, String outputFileName) throws Exception {
         File file = new File(outputFileName);
         if (!file.exists()) {
             file.createNewFile();
@@ -28,21 +28,31 @@ public class NumIO {
         return file;
     }
 
-    public List<Integer> read(File tempFile, long numbersToRead) throws Exception {
+    public List<Object> read(File tempFile, long numbersToRead) throws Exception {
         return read(new FileInputStream(tempFile), numbersToRead);
     }
 
-    public List<Integer> read(InputStream inputStream, long numbersToRead) throws Exception {
+    public List<Object> read(InputStream inputStream, long numbersToRead) throws Exception {
         return read(new Scanner(inputStream), numbersToRead);
     }
 
-    public List<Integer> read(Scanner scanner, long numbersToRead) {
-        List<Integer> result = new ArrayList<>();
+    public List<Object> read(Scanner scanner, long numbersToRead) {
+        boolean isInputString = true;
+        if (scanner.hasNextInt()) {
+            isInputString = false;
+        }
+        List<Object> result = new ArrayList<>();
         for (int i = 0; i < numbersToRead; i++) {
             if (!scanner.hasNextInt()) {
                 break;
             }
-            result.add(scanner.nextInt());
+            Object value;
+            if (isInputString) {
+                value = scanner.next();
+            } else {
+                value = scanner.nextInt();
+            }
+            result.add(value);
         }
         return result;
     }

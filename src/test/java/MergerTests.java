@@ -40,7 +40,7 @@ public class MergerTests {
         InputStream inputStream1 = new FileInputStream(file1);
         InputStream inputStream2 = new FileInputStream(file2);
         Merger merger = new Merger();
-        List<Integer> mergedLists = merger.merge(inputStream1, inputStream2, 100);
+        List<Object> mergedLists = merger.merge(inputStream1, inputStream2, 100);
         assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8), mergedLists);
     }
 
