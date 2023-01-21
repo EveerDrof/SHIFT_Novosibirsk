@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SorterTests {
     @Test
@@ -68,7 +69,7 @@ public class SorterTests {
     @Test
     void generateFilesForMergingTest() throws Exception {
         Sorter sorter = new Sorter();
-        Queue<File> fileQueue = new LinkedList<File>();
+        Queue<File> fileQueue = new LinkedList<>();
         List<Integer> values1 = new ArrayList<>();
         List<Integer> values2 = new ArrayList<>();
         for (int i = 10; i > 0; i -= 2) {
@@ -84,15 +85,27 @@ public class SorterTests {
                 throw new RuntimeException(e);
             }
         }).collect(Collectors.toCollection(LinkedList::new));
-        long memoryLimit = 5;
+        long memoryLimit = 20;
         Queue<File> filesForMerging = sorter.generateFilesForMerging(scannerQueue, memoryLimit);
         NumIO numIO = new NumIO();
-        System.out.println("Files size : " + filesForMerging.size());
         List<Integer> ints = numIO.read(filesForMerging.remove(), 999);
         Collections.reverse(values1);
         Collections.reverse(values2);
         assertEquals(values1, ints);
         ints = numIO.read(filesForMerging.remove(), 999);
         assertEquals(values2, ints);
+    }
+
+    @Test
+    void sorterGenerationMemoryLimitTest() throws Exception {
+        File input = TestUtils.getTempFile(InputType.INPUT_BIG_CASE);
+        Queue<Scanner> inputList = new LinkedList();
+        inputList.add(new Scanner(input));
+        long memoryLimit = 100;
+        Sorter sorter = new Sorter();
+        MemoryUsageChecker memoryUsageChecker = new MemoryUsageChecker();
+        sorter.generateFilesForMerging(inputList, memoryLimit);
+        long memoryUsage = memoryUsageChecker.stopAndGetUsage();
+        assertTrue(memoryLimit >= memoryUsage);
     }
 }

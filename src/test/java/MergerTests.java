@@ -57,7 +57,6 @@ public class MergerTests {
             filesContents.get(i % filesNumber).add(i);
             allNumbers.add(i);
         }
-        NumIO numIO = new NumIO();
         Queue<File> fileQueue = new LinkedList<>();
 
         for (List<Integer> contents : filesContents) {

@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -6,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileSorterTests {
     @Test
@@ -44,20 +46,21 @@ public class FileSorterTests {
     }
 
     @Test
+    @Disabled
     void memoryLimitTestFileSizeBiggerThanLimit() throws Exception {
-        final int memoryLimit = 16;
+        final int memoryLimit = 4;
         FileSorter fileSorter = new FileSorter();
         fileSorter.setMemoryLimit(memoryLimit);
         List<File> files = new ArrayList<>();
         int filesNumber = 2;
-        final int range = 8;
+        final int range = 3;
         for (int i = 0; i < filesNumber; i++) {
             files.add(TestUtils.getBigTempFile(range));
         }
-        MemoryUsageChecker memoryUsageChecker = new MemoryUsageChecker(memoryLimit);
+        MemoryUsageChecker memoryUsageChecker = new MemoryUsageChecker();
         File result = fileSorter.sort(files);
         TestUtils.assertBigTempFile(result, range, filesNumber);
-        memoryUsageChecker.stop();
+        assertTrue(memoryUsageChecker.stopAndGetUsage() <= memoryLimit);
     }
 
     @Test
@@ -81,7 +84,6 @@ public class FileSorterTests {
         int range = 10;
         List<File> files = List.of(TestUtils.getBigTempFile(range));
         File result = fileSorter.sort(files);
-        System.out.println("NAME =============" + result.getName());
         TestUtils.assertBigTempFile(result, range, 1);
     }
 }

@@ -26,22 +26,10 @@ public class FileSorter {
         }).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    private long computeNumbersToRead() {
-        final long integerSize = 4;
-        long numbersToRead = memoryLimit / integerSize;
-        long overhead = numbersToRead * 70 / 100;
-        numbersToRead -= overhead;
-        return numbersToRead;
-    }
-
 
     public File sort(List<File> testFiles) throws Exception {
         Queue<Scanner> inputScanners = filesToScanners(testFiles);
         Queue<File> filesForMerging = sorter.generateFilesForMerging(inputScanners, memoryLimit);
-        System.out.println("Now we merging: " + filesForMerging.size());
-        for (File f : filesForMerging) {
-            System.out.println(f.getName());
-        }
         Merger merger = new Merger();
         return merger.merge(filesForMerging, memoryLimit);
     }

@@ -70,7 +70,6 @@ public class Merger {
         while (filesForMerging.size() != 1) {
             File firstFile = filesForMerging.remove();
             File secondFile = filesForMerging.remove();
-            System.out.println("Files for merging size : " + filesForMerging.size());
             Scanner firstScanner = new Scanner(firstFile);
             Scanner secondScanner = new Scanner(secondFile);
             File mergedFile = new File(tmpDirName + "/MergedFile_" + tempFilesNumber + ".txt");
@@ -78,17 +77,11 @@ public class Merger {
             mergedFile.createNewFile();
             while (firstScanner.hasNextInt() || secondScanner.hasNextInt()) {
                 List<Integer> merged = merge(firstScanner, secondScanner, memoryLimit);
-                System.out.println("Merged : ");
-                System.out.println(merged);
                 numIO.write(merged, mergingPrintWriter);
-                System.out.println("Cycle continues");
             }
-            System.out.println("=============Cycle ended");
             mergingPrintWriter.close();
             filesForMerging.add(mergedFile);
             tempFilesNumber++;
-//            firstFile.delete();
-//            secondFile.delete();
         }
         File result = filesForMerging.remove();
         result.renameTo(new File(tmpDirName + "/Result.txt"));

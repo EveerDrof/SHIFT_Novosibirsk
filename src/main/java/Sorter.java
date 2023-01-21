@@ -34,7 +34,7 @@ public class Sorter {
 
     public Queue<File> generateFilesForMerging(Queue<Scanner> inputScanners, long memoryLimit) throws Exception {
         tmpFilesManager.prepareTemporaryDir("./tempSorter");
-        long numbersToRead = memoryLimit;
+        long numbersToRead = memoryLimit / 4;
         long overhead = numbersToRead / 10;
         numbersToRead -= overhead;
         List<Integer> unsorted;
@@ -44,8 +44,6 @@ public class Sorter {
             long remainingNumbersToRead = numbersToRead;
             while (remainingNumbersToRead > 0 && !inputScanners.isEmpty()) {
                 List<Integer> numbers = numIO.read(inputScanners.peek(), remainingNumbersToRead);
-                System.out.println("Numbers are");
-                System.out.println(numbers);
                 if (numbers.size() < remainingNumbersToRead) {
                     inputScanners.remove().close();
                 }
@@ -53,7 +51,6 @@ public class Sorter {
                 unsorted.addAll(numbers);
             }
             List<Integer> sorted = sort(unsorted);
-            System.out.println("Sorted size : " + sorted.size());
             filesForMerging.add(numIO.write(sorted, "./tempSorter/SortedFile_" + tempFilesNumber + ".txt"));
             tempFilesNumber++;
         }
