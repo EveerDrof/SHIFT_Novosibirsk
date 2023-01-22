@@ -116,4 +116,13 @@ public class SorterTests {
         List<String> sorted = sorter.sort(unsorted);
         assertEquals(List.of("A", "B", "H", "I", "Z"), sorted);
     }
+
+    @Test
+    void reversedStringSorting() {
+        Sorter sorter = new Sorter();
+        sorter.descending(true);
+        List<String> unsorted = new ArrayList<>(List.of("A", "H", "B", "Z", "I"));
+        List<String> sorted = sorter.sort(unsorted);
+        assertEquals(List.of("Z", "I", "H", "B", "A"), sorted);
+    }
 }

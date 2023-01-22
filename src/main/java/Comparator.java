@@ -10,6 +10,6 @@ public class Comparator {
         if (a instanceof String) {
             return ((String) a).compareTo((String) b) >= 0;
         }
-        return (Integer) a > (Integer) b;
+        return (Integer) a >= (Integer) b;
     }
 }

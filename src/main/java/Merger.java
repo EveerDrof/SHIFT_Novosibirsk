@@ -7,10 +7,12 @@ import java.util.*;
 public class Merger {
     private NumIO numIO;
     private TmpFilesManager tmpFilesManager;
+    private boolean descending;
 
     public Merger() {
         numIO = new NumIO();
         tmpFilesManager = new TmpFilesManager();
+        descending = false;
     }
 
     protected <T> void addRemainingValues(List<T> result, Iterator<T> iterator) {
@@ -34,7 +36,11 @@ public class Merger {
         T leftValue = leftIterator.next();
         T rightValue = rightIterator.next();
         while (true) {
-            if (Comparator.isGreaterOrEqual(rightValue, leftValue)) {
+            boolean order = Comparator.isGreaterOrEqual(rightValue, leftValue);
+            if (descending) {
+                order = !order;
+            }
+            if (order) {
                 result.add(leftValue);
                 if (!leftIterator.hasNext()) {
                     result.add(rightValue);
@@ -86,5 +92,9 @@ public class Merger {
         File result = filesForMerging.remove();
         result.renameTo(new File(tmpDirName + "/Result.txt"));
         return new File(tmpDirName + "/Result.txt");
+    }
+
+    public void descending(boolean b) {
+        descending = b;
     }
 }

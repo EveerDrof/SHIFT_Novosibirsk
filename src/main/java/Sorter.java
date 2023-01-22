@@ -6,8 +6,10 @@ public class Sorter {
     private final NumIO numIO;
     private TmpFilesManager tmpFilesManager;
     private int tempFilesNumber;
+    private boolean descending;
 
     public Sorter() {
+        this.descending = false;
         this.merger = new Merger();
         this.numIO = new NumIO();
         this.tmpFilesManager = new TmpFilesManager();
@@ -22,9 +24,12 @@ public class Sorter {
             T value1 = values.get(1);
 
             if (Comparator.isGreater(value0, value1)) {
-                return List.of(values.get(1), values.get(0));
+                if (descending) {
+                    return List.of(value0, value1);
+                } else {
+                    return List.of(value1, value0);
+                }
             }
-
         }
         List<T> firstHalf = sortRecursive(values.subList(0, values.size() / 2));
         List<T> secondHalf = sortRecursive(values.subList(values.size() / 2, values.size()));
@@ -58,6 +63,11 @@ public class Sorter {
             tempFilesNumber++;
         }
         return filesForMerging;
+    }
+
+    public void descending(boolean b) {
+        descending = b;
+        merger.descending(b);
     }
 }
 

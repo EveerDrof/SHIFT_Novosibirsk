@@ -37,11 +37,14 @@ public class TestUtils {
         }
     }
 
-    protected static List<Integer> readList(File file) throws Exception {
-        List<Integer> result = new ArrayList<>();
+    protected static List<Object> readList(File file) throws Exception {
+        List<Object> result = new ArrayList<>();
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextInt()) {
                 result.add(scanner.nextInt());
+            }
+            while (scanner.hasNext()) {
+                result.add(scanner.next());
             }
         }
         return result;
@@ -72,7 +75,7 @@ public class TestUtils {
     public static void assertBigTempFile(File file, int range, int copies) throws Exception {
         List<Integer> expected = getBigList(range);
         Collections.reverse(expected);
-        List<Integer> actualList = readList(file);
+        List<Object> actualList = readList(file);
         assertEquals(expected.size() * copies, actualList.size());
         expected = expected.stream().flatMap(i -> Collections.nCopies(copies, i).stream()).collect(Collectors.toList());
         assertEquals(expected, actualList);
@@ -83,6 +86,11 @@ public class TestUtils {
             case EXPECTED_CASE1 -> assertEquals(List.of(1, 2, 3, 4, 5), readList(file));
             case EXPECTED_CASE2 -> assertEquals(List.of(0, 1, 2, 3, 4, 5, 6, 7), readList(file));
         }
+    }
+
+    public static <T> void assertFile(File file, List<T> expected) throws Exception {
+        List<Object> actual = readList(file);
+        assertEquals(expected, actual);
     }
 
     public static synchronized File createTempFile(List<?> data) throws Exception {

@@ -66,4 +66,12 @@ public class MergerTests {
         File file = merger.merge(fileQueue, 9999);
         assertEquals(allNumbers, TestUtils.readList(file));
     }
+
+    @Test
+    public void mergeDescending() throws Exception {
+        Merger merger = new Merger();
+        merger.descending(true);
+        List<Integer> result = merger.merge(List.of(100, 98, 96), List.of(99, 97, 96));
+        assertEquals(List.of(100, 99, 98, 97, 96, 96), result);
+    }
 }

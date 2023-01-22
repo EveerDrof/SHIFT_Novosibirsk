@@ -37,19 +37,19 @@ public class NumIO {
     }
 
     public List<Object> read(Scanner scanner, long numbersToRead) {
-        boolean isInputString = true;
-        if (scanner.hasNextInt()) {
-            isInputString = false;
-        }
+        boolean isInputString = !scanner.hasNextInt();
         List<Object> result = new ArrayList<>();
         for (int i = 0; i < numbersToRead; i++) {
-            if (!scanner.hasNextInt()) {
-                break;
-            }
             Object value;
             if (isInputString) {
+                if (!scanner.hasNext()) {
+                    break;
+                }
                 value = scanner.next();
             } else {
+                if (!scanner.hasNextInt()) {
+                    break;
+                }
                 value = scanner.nextInt();
             }
             result.add(value);

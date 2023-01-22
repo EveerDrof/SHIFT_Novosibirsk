@@ -86,4 +86,16 @@ public class FileSorterTests {
         File result = fileSorter.sort(files);
         TestUtils.assertBigTempFile(result, range, 1);
     }
+
+    @Test
+    void descendingOrderTest() throws Exception {
+        FileSorter fileSorter = new FileSorter();
+        fileSorter.descending(true);
+        List<String> input = List.of("A", "B", "Z", "C", "D");
+        File file = TestUtils.getTempFile(InputType.EMPTY_FILE);
+        TestUtils.writeToFile(input, file);
+        List<File> files = List.of(file);
+        File result = fileSorter.sort(files);
+        TestUtils.assertFile(result, List.of("Z", "D", "C", "B", "A"));
+    }
 }
